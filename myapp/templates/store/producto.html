@@ -1,0 +1,69 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{%block content%}
+
+
+<div class="card mb-3">
+  <div class="row g-0">
+    <div class="col-md-4">
+      <img src="{{ producto.imagen.url}}" class="img-fluid rounded-start" alt="...">
+    </div>
+    <div class="col-md-8">
+      <div class="card-body">
+        <h5 class="card-title">{{producto.nombre}}</h5>
+        <p class="card-text">{{producto.descripcion}}</p>
+        {% if producto.Esta_en_Descuento %}
+
+          <strike>${{producto.precio}}</strike>
+          ${{producto.Precio_Descuento}}
+
+        {% else  %}
+
+          ${{producto.precio}}
+          <br/> ID: {{producto.id}}
+        {% endif %}
+        
+      </div>
+      
+      <br><br><br><br><br><br>
+      <div class="text-center"><a class="btn btn-dark" href="{% url "home" %}">Home</a>
+        <button type="button" class="btn btn-dark" value="{{producto.id}}" id="add-cart">Carrito</button>
+      
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+
+
+<script>
+//check si el boton fue presionado
+
+$(document).on('click','#add-cart', function(e){
+  e.preventDefault();
+  $.ajax({
+    type: 'POST',
+    url: '{% url 'cart_add' %}',
+    data:{
+      producto_id: $('#add-cart').val(),
+      csrfmiddlewaretoken:'{{ csrf_token }}',
+      action:'post'
+    },
+
+    success: function(json){
+      console.log(json)
+    },
+
+    error: function(xhr, errmsg, err){
+    }
+
+  });
+})
+
+
+</script>
+
+{%endblock%}
