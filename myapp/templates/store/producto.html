@@ -21,10 +21,10 @@
         {% else  %}
 
           ${{producto.precio}}
-          <br/> ID: {{producto.id}}
         {% endif %}
         
       </div>
+      
       
       <br><br><br><br><br><br>
       <div class="text-center"><a class="btn btn-dark" href="{% url "home" %}">Home</a>
@@ -54,7 +54,8 @@ $(document).on('click','#add-cart', function(e){
     },
 
     success: function(json){
-      console.log(json)
+      //console.log(json)
+      document.getElementById('cart_quantity').textContent =json.cantidad
     },
 
     error: function(xhr, errmsg, err){

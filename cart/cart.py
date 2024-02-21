@@ -1,3 +1,5 @@
+from myapp.models import Producto
+
 class Cart():
     def __init__(self,request):
         self.session=request.session
@@ -13,12 +15,23 @@ class Cart():
         #Hay que asegurarse que cart esta disponible en todas la paginas
         self.cart=cart
         
-    def add(self, producto):
-        product_id=str(producto.id)
+    def add (self, producto):
+        producto_id=str(producto.id)
         
         #logica
-        if product_id in self.cart:
+        if producto_id in self.cart:
             pass
         else:
-            self.cart[product_id]={'precio':str(producto.precio)}
+            self.cart[producto_id]={'precio':str(producto.precio)}
         self.session.modified=True
+        
+        
+    def __len__(self):
+        return len(self.cart)
+    
+    def get_productos (self):
+        #Toma los ids del carrito
+        producto_ids =self.cart.keys()
+        #usa los ids para ver los productos en la base de datos (models)
+        productos=Producto.objects.filter(id__in=producto_ids)
+        return productos
