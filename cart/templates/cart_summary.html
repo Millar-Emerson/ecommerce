@@ -19,7 +19,6 @@
   <div class="container h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
       <div class="col">
-        <p><span class="h2">Shopping Cart </span><span class="h4">(1 item in your cart)</span></p>
         {%for producto in cart_productos%}
           <div class="card mb-4">
             <div class="card-body p-4">
@@ -44,8 +43,32 @@
                 </div>
                 <div class="col-md-2 d-flex justify-content-center">
                   <div>
-                    <p class="small text-muted mb-4 pb-2">Quantity</p>
-                    <p class="lead fw-normal mb-0">1</p>
+                    <p class="small text-muted mb-4 pb-2">Cantidad</p>
+                    <p class="lead fw-normal mb-0">
+                      
+                      <div class="lead fw-normal mb-0">
+                        
+                        <div class="col-md-2">
+                          <select class="form-select form-select-sm" id="qty_cart">
+                              {%for key, value in cantidades.items%}
+                              <! slugify cambia el tipo de dato de key que es un string para poder compararlo>
+                                {%if key == producto.id|slugify %}
+
+                                  <option selected> {{value}}</option>
+                                  
+                                {%endif%}
+
+                              {%endfor%}
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                          </select>
+                        </div>
+                      </div> 
+
+                    </p>
                   </div>
                 </div>
                 <div class="col-md-2 d-flex justify-content-center">
@@ -89,8 +112,8 @@
         </div>
 
         <div class="d-flex justify-content-end">
-          <button type="button" class="btn btn-light btn-lg me-2">Continue shopping</button>
-          <button type="button" class="btn btn-primary btn-lg">Add to cart</button>
+          <a class="btn btn-light btn-lg me-2" href="{% url "home" %}">Seguir comprando</a>
+          <button type="button" class="btn btn-primary btn-lg">Chekout</button>
         </div>
 
       </div>
