@@ -36,25 +36,21 @@
                 </div>
                 <div class="col-md-2 d-flex justify-content-center">
                   <div>
-                    <p class="small text-muted mb-4 pb-2">Color</p>
-                    <p class="lead fw-normal mb-0"><i class="fas fa-circle me-2" style="color: #fdd8d2;"></i>
-                      pink rose</p>
-                  </div>
-                </div>
-                <div class="col-md-2 d-flex justify-content-center">
-                  <div>
-                    <p class="small text-muted mb-4 pb-2">Cantidad</p>
+                    {%for key, value in cantidades.items%}
+                    {%if key == producto.id|slugify %}
+                    <p class="small text-muted mb-4 pb-2">Cantidad: {{value}}</p>
                     <p class="lead fw-normal mb-0">
-                      
+                      {%endif%}
+                      {%endfor%}
                       <div class="lead fw-normal mb-0">
                         
                         <div class="col-md-2">
-                          <select class="form-select form-select-sm" id="qty_cart">
+                          <select class="form-select form-select" id="select{{producto.id}}">
                               {%for key, value in cantidades.items%}
                               <! slugify cambia el tipo de dato de key que es un string para poder compararlo>
                                 {%if key == producto.id|slugify %}
 
-                                  <option selected> {{value}}</option>
+                                  <option selected> {{value}} </option>
                                   
                                 {%endif%}
 
@@ -67,7 +63,6 @@
                           </select>
                         </div>
                       </div> 
-
                     </p>
                   </div>
                 </div>
@@ -87,14 +82,19 @@
                   <div>
                     <p class="small text-muted mb-4 pb-2">Total</p>
                     {%if producto.Esta_en_Descuento%}
-                      <p class="lead fw-normal mb-0">{{producto.Precio_Descuento}}</p>
+                      <p class="lead fw-normal mb-0">${{producto.Precio_Descuento}}</p>
                     {%else%}
-                      <p class="lead fw-normal mb-0">{{producto.precio}}</p>
+                      <p class="lead fw-normal mb-0">${{producto.precio}}</p>
                     {%endif%}
                   </div>
                 </div>
+                <div class="col-md-2 d-flex justify-content-center">
+                  <button type="button" class="btn btn-danger delete-product" data-index="{{producto.id}}">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                  <button type="button" data-index="{{producto.id}}" class="btn btn-secondary update-cart"> actualizar</button>
+                </div>
               </div>
-
             </div>
           </div>
         {%endfor%}
@@ -103,8 +103,8 @@
 
             <div class="float-end">
               <p class="mb-0 me-5 d-flex align-items-center">
-                <span class="small text-muted me-2">Order total:</span> <span
-                  class="lead fw-normal">$799</span>
+                <span class="small text-muted me-2">Orden total:</span> <span
+                  class="lead fw-normal">${{carrito_total}}</span>
               </p>
             </div>
 
@@ -127,5 +127,69 @@
 
 <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 
+
+<script>
+  //actualiza la cantidad 
+  //check si el boton fue presionado
+  
+  $(document).on('click','.update-cart', function(e){
+    e.preventDefault();
+    // toma el id del producto
+    var productoid= $(this).data('index');
+    $.ajax({
+      type: 'POST',
+      url: '{% url 'cart_update' %}',
+      data:{
+        producto_id: $(this).data('index'),
+        producto_qty: $('#select' + productoid + ' option:selected' ).text(),
+        csrfmiddlewaretoken:'{{ csrf_token }}',
+        action:'post'
+      },
+  
+      success: function(json){
+        //console.log(json)
+        //document.getElementById('cart_quantity').textContent =json.cantidad
+        location.reload();
+      },
+  
+      error: function(xhr, errmsg, err){
+      }
+  
+    });
+  })
+  
+  
+</script>
+<script>
+  //borra el producto
+  //check si el boton fue presionado
+  
+  $(document).on('click','.delete-product', function(e){
+    e.preventDefault();
+    // toma el id del producto
+    var productoid= $(this).data('index');
+    $.ajax({
+      type: 'POST',
+      url: '{% url 'cart_delete' %}',
+      data:{
+        producto_id: $(this).data('index'),
+        csrfmiddlewaretoken:'{{ csrf_token }}',
+        action:'post'
+      },
+  
+      success: function(json){
+        //console.log(json)
+        //document.getElementById('cart_quantity').textContent =json.cantidad
+        location.reload();
+      },
+  
+      error: function(xhr, errmsg, err){
+      }
+  
+    });
+  })
+  
+  
+</script>
 
 {%endblock%}
